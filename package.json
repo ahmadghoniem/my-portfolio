@@ -1,0 +1,47 @@
+{
+  "name": "my-portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "generate-types": "wrangler types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.1.0",
+    "@radix-ui/colors": "^3.0.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^6.0.3",
+    "node-vibrant": "^4.0.4",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "wrangler": "^4.72.0"
+  },
+  "prettier": {
+    "semi": false,
+    "trailingComma": "none",
+    "printWidth": 140,
+    "bracketSameLine": true,
+    "plugins": [
+      "prettier-plugin-astro",
+      "prettier-plugin-organize-imports",
+      "prettier-plugin-tailwindcss"
+    ],
+    "overrides": [
+      {
+        "files": "*.astro",
+        "options": {
+          "parser": "astro"
+        }
+      }
+    ]
+  }
+}

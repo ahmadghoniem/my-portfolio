@@ -1,0 +1,104 @@
+---
+import IconArrowUpRight from "./icons/IconArrowUpRight.astro"
+
+const isHome = Astro.url.pathname === "/"
+const p = (hash: string) => (isHome ? hash : `/${hash}`)
+---
+
+<header
+  class="pointer-events-none fixed top-0 right-0 left-0 z-10 w-full"
+>
+  <nav class="mx-auto mt-5 flex items-center justify-center">
+    <ul
+      id="nav-pill"
+      class="bg-nav-pill/80 [&.is-scrolled]:bg-nav-pill/80 pointer-events-auto flex items-center gap-1 rounded-full p-2 backdrop-blur-md backdrop-saturate-150 transition-[background,box-shadow,backdrop-filter] duration-200 ease-linear sm:bg-transparent sm:backdrop-blur-none sm:backdrop-saturate-100 [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:backdrop-saturate-150"
+    >
+      <li>
+        <a href={p("#hero")} data-section="hero" class="nav-link">Home</a>
+      </li>
+      <li>
+        <a href={p("#projects")} data-section="projects" class="nav-link">Projects</a>
+      </li>
+      <li>
+        <a href={p("#outro")} data-section="outro" class="nav-link">Connect</a>
+      </li>
+      <li class="group">
+        <a
+          href="https://ahmadghoniem.cv/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link-external gap-1 font-medium"
+        >
+          Resume
+          <span
+            class="inline-block transition-transform duration-200 ease-in-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          >
+            <IconArrowUpRight class="size-3.5" />
+          </span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const pill = document.getElementById("nav-pill")!
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-section]")
+  const isHome = window.location.pathname === "/"
+
+  const onScroll = () => {
+    if (window.innerWidth >= 640) {
+      pill.classList.toggle("is-scrolled", window.scrollY > 20)
+    }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true })
+  onScroll()
+
+  const setActive = (id: string) => {
+    navLinks.forEach((link) => {
+      const isActive = link.dataset.section === id
+      link.classList.toggle("text-foreground", isActive)
+      link.classList.toggle("bg-nav-active", isActive)
+      link.classList.toggle("text-muted", !isActive)
+    })
+  }
+
+  if (!isHome) {
+    // Only highlight projects on project detail pages
+    if (window.location.pathname.startsWith("/projects")) {
+      setActive("projects")
+    }
+  } else {
+    setActive("hero")
+
+    const sectionIds = ["hero", "projects", "outro"]
+    const visibilityMap = new Map<string, number>(sectionIds.map((id) => [id, 0]))
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibilityMap.set(entry.target.id, entry.intersectionRatio)
+        })
+
+        let maxRatio = 0
+        let activeId = "hero"
+        visibilityMap.forEach((ratio, id) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio
+            activeId = id
+          }
+        })
+
+        setActive(activeId)
+      },
+      {
+        threshold: Array.from({ length: 21 }, (_, i) => i * 0.05)
+      }
+    )
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+  }
+</script>

@@ -1,0 +1,61 @@
+---
+import IconReact from "./icons/IconReact.astro"
+import IconTs from "./icons/IconTs.astro"
+import IconTailwindcss from "./icons/IconTailwindcss.astro"
+import IconChrome from "./icons/IconChrome.astro"
+import IconHardhat from "./icons/IconHardhat.astro"
+import IconRainbowKit from "./icons/IconRainbowKit.astro"
+import IconSanity from "./icons/IconSanity.astro"
+import IconSocketIO from "./icons/IconSocketIO.astro"
+import IconSupabase from "./icons/IconSupabase.astro"
+import IconViem from "./icons/IconViem.astro"
+import IconWagmi from "./icons/IconWagmi.astro"
+import IconRecharts from "./icons/IconRecharts.astro"
+import IconAstro from "./icons/IconAstro.astro"
+import IconNodejs from "./icons/IconNodejs.astro"
+import IconShadcn from "./icons/IconShadcn.astro"
+import IconSerialport from "./icons/IconSerialport.astro"
+import zustandLogo from "../assets/images/tech/zustand.png"
+
+interface Props {
+  tag: string
+}
+
+const { tag } = Astro.props
+const normalized = tag.toLowerCase()
+
+type ComponentEntry = { type: "component"; icon: any }
+type ImageEntry = { type: "image"; src: string }
+type IconEntry = ComponentEntry | ImageEntry
+
+const iconMap: Record<string, IconEntry> = {
+  react: { type: "component", icon: IconReact },
+  typescript: { type: "component", icon: IconTs },
+  tailwind: { type: "component", icon: IconTailwindcss },
+  chrome: { type: "component", icon: IconChrome },
+  hardhat: { type: "component", icon: IconHardhat },
+  rainbowkit: { type: "component", icon: IconRainbowKit },
+  sanity: { type: "component", icon: IconSanity },
+  socket: { type: "component", icon: IconSocketIO },
+  supabase: { type: "component", icon: IconSupabase },
+  viem: { type: "component", icon: IconViem },
+  wagmi: { type: "component", icon: IconWagmi },
+  recharts: { type: "component", icon: IconRecharts },
+  astro: { type: "component", icon: IconAstro },
+  serialport: { type: "component", icon: IconSerialport },
+  node: { type: "component", icon: IconNodejs },
+  shadcn: { type: "component", icon: IconShadcn },
+  zustand: { type: "image", src: zustandLogo.src }
+}
+
+const key = Object.keys(iconMap).find((k) => normalized.includes(k))
+const match = key ? iconMap[key] : null
+---
+
+<span
+  class="border-border text-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium"
+  class:list={[{ "pl-2": !!match }]}>
+  {match?.type === "component" && <match.icon class="size-4 shrink-0" />}
+  {match?.type === "image" && <img src={match.src} alt="" class="size-4 shrink-0 object-contain" aria-hidden="true" />}
+  <span>{tag}</span>
+</span>

@@ -1,0 +1,91 @@
+---
+import { Image } from "astro:assets"
+import alexandriaLogo from "../assets/images/alexandria.png"
+import SpotifyWidget from "./SpotifyWidget.astro"
+import IconHeart from "./icons/IconHeart.astro"
+---
+
+<footer class="mt-auto border-t border-(--sand-3) bg-(--sand-3)/80 px-4 py-10 sm:px-6">
+  <div class="mx-auto max-w-5xl">
+    <div class="footer-grid sm:footer-grid-sm lg:footer-grid-lg">
+      <!-- Spotify -->
+      <div class="[grid-area:spotify]">
+        <p id="sw-footer-label" class="font-display text-display mb-3 text-lg font-medium lg:text-xl">On repeat</p>
+        <SpotifyWidget />
+      </div>
+
+      <!-- Elsewhere -->
+      <div class="[grid-area:elsewhere] md:row-span-2 lg:row-span-1">
+        <p class="font-display text-display mb-3 text-lg font-medium lg:text-xl">Elsewhere</p>
+        <div class="flex flex-row gap-8 sm:flex-col sm:gap-1">
+          <a href="mailto:hi@ahmadghoniem.me" class="text-foreground hover:text-accent-hover text-sm transition-colors duration-200"
+            >Email</a
+          >
+          <a
+            href="https://www.linkedin.com/in/ahmadghoniem/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-foreground hover:text-accent-hover text-sm transition-colors duration-200">LinkedIn</a
+          >
+          <a
+            href="https://github.com/ahmadghoniem"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-foreground hover:text-accent-hover text-sm transition-colors duration-200">GitHub</a
+          >
+          <a
+            href="https://x.com/ahmadghoniem"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-foreground hover:text-accent-hover text-sm transition-colors duration-200">X / Twitter</a
+          >
+        </div>
+      </div>
+
+      <!-- Colophon -->
+      <div class="[grid-area:colophon]">
+        <p class="font-display text-display mb-3 text-lg font-medium md:tracking-normal lg:text-xl">Colophon</p>
+        <div class="text-foreground flex flex-col gap-px text-xs sm:text-sm">
+          <p>
+            <span
+              >Loosely designed in <a
+                href="https://www.figma.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-accent-hover font-medium">Figma</a
+              ></span
+            ><span>
+              &middot; Coded in <a
+                href="https://zed.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-accent-hover font-medium">Zed</a
+              > by yours truly</span
+            >
+          </p>
+          <p>
+            <span
+              >Built with <a
+                href="https://astro.build/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-accent-hover font-medium">Astro &amp; TailwindCSS</a
+              ></span
+            ><span>
+              &middot; Deployed on <a
+                href="https://pages.cloudflare.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-accent-hover font-medium">Cloudflare</a
+              ></span
+            >
+          </p>
+          <p class="flex items-start gap-1">
+            &copy; 2026 Ahmad Ghoniem &middot; Made with <IconHeart class="size-4 text-(--red-9)" /> in
+            <Image src={alexandriaLogo} alt="Alexandria" class="h-3.5 w-auto sm:h-4.25" style="filter: invert(80%);" />
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

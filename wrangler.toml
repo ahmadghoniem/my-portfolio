@@ -1,0 +1,16 @@
+name = "your-project-name"
+main = "dist/_worker.js/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+binding = "ASSETS"
+directory = "./dist"
+
+[observability]
+enabled = true
+
+# KV namespaces will be bound via Cloudflare dashboard UI
+# Add these bindings in Settings → KV Namespace Bindings:
+# - SPOTIFY_TOKEN
+# - SPOTIFY_CACHE

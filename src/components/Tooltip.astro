@@ -1,0 +1,71 @@
+---
+interface Props {
+  text: string
+  clickedText?: string
+  position?: "top" | "bottom" | "left" | "right"
+}
+const { text, clickedText = "Copied", position = "top" } = Astro.props
+---
+
+<div class="tooltip-container relative inline-flex">
+  <slot />
+  <span
+    class="tooltip bg-foreground text-background pointer-events-none absolute rounded-md px-2 py-1 text-xs font-medium whitespace-nowrap opacity-0 transition-opacity duration-200"
+    data-text={text}
+    data-clicked-text={clickedText}
+    data-position={position}
+  >
+    {text}
+  </span>
+</div>
+
+<style>
+  .tooltip-container:hover .tooltip {
+    opacity: 1;
+  }
+
+  .tooltip[data-position="top"] {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .tooltip[data-position="bottom"] {
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .tooltip[data-position="left"] {
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .tooltip[data-position="right"] {
+    left: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+</style>
+
+<script>
+  const containers = document.querySelectorAll<HTMLElement>(".tooltip-container")
+
+  containers.forEach((container) => {
+    const tooltip = container.querySelector<HTMLElement>(".tooltip")
+    if (!tooltip) return
+
+    let resetTimer: ReturnType<typeof setTimeout> | null = null
+
+    container.addEventListener("click", () => {
+      if (resetTimer) clearTimeout(resetTimer)
+
+      tooltip.textContent = tooltip.dataset.clickedText ?? "Copied"
+      tooltip.classList.add("text-accent")
+
+      resetTimer = setTimeout(() => {
+        tooltip.textContent = tooltip.dataset.text ?? "Copy"
+        tooltip.classList.remove("text-accent")
+        resetTimer = null
+      }, 2000)
+    })
+  })
+</script>

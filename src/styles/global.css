@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "@radix-ui/colors/slate.css";
+@import "@radix-ui/colors/sand.css";
+@import "@radix-ui/colors/amber.css";
+@import "@radix-ui/colors/iris.css";
+@import "@radix-ui/colors/teal.css";
+@import "@radix-ui/colors/violet.css";
+@import "@radix-ui/colors/sky.css";
+@import "@radix-ui/colors/yellow.css";
+@import "@radix-ui/colors/red.css";
+@import "./fonts.css";
+
+@theme {
+  --font-display: "Acorn", serif;
+  --font-ui: "Bricolage Grotesque", sans-serif;
+  --font-body: "Geist", sans-serif;
+
+  --color-background: var(--sand-2);
+  --color-surface: var(--slate-2);
+  --color-border: var(--slate-5);
+  --color-border-ui: var(--slate-7);
+  --color-border-hover: var(--slate-8);
+
+  --color-display: var(--iris-12);
+  --color-foreground: var(--slate-12);
+  --color-muted: var(--slate-11);
+  --color-tertiary: var(--slate-9);
+
+  --color-accent-bg-subtle: var(--iris-3);
+  --color-badge-bg: var(--iris-4);
+  --color-badge-border: var(--iris-5);
+  --color-accent-border: var(--iris-5);
+  --color-accent: var(--iris-9);
+  --color-accent-hover: var(--slate-11);
+  --color-badge-text: var(--iris-11);
+
+  --color-nav-pill: var(--iris-3);
+  --color-nav-active: var(--iris-4);
+}
+
+:root {
+  --card-violet-bg: var(--violet-5);
+  --card-violet-shadow: var(--violet-7);
+  --card-slate-bg: var(--slate-5);
+  --card-slate-shadow: var(--slate-7);
+  --card-sky-bg: var(--sky-5);
+  --card-sky-shadow: var(--sky-7);
+  --card-yellow-bg: var(--yellow-5);
+  --card-yellow-shadow: var(--yellow-7);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  ::selection {
+    background-color: var(--iris-5);
+    color: var(--iris-12);
+  }
+
+  [data-card="violet"] ::selection {
+    background-color: var(--violet-4);
+    color: var(--violet-12);
+  }
+  [data-card="slate"] ::selection {
+    background-color: var(--slate-4);
+    color: var(--slate-12);
+  }
+  [data-card="sky"] ::selection {
+    background-color: var(--sky-4);
+    color: var(--sky-12);
+  }
+  [data-card="yellow"] ::selection {
+    background-color: var(--yellow-4);
+    color: var(--yellow-12);
+  }
+}
+
+/*
+   LINK SYSTEM
+ */
+
+@utility link-external {
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover .arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+@utility link-internal {
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover .arrow {
+    transform: translateX(4px);
+  }
+}
+
+@utility arrow {
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+}
+
+/*
+   NAV
+ */
+
+@utility nav-link {
+  @apply text-muted flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
+
+  &:not(.bg-nav-active):hover {
+    @apply text-foreground bg-nav-active/70;
+  }
+}
+
+@utility nav-link-external {
+  @apply text-muted hover:text-foreground flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
+}
+
+.tech-chip {
+  @apply border-border inline-flex items-center gap-1.5 rounded-md border px-1.5 align-middle;
+  background-color: color-mix(in srgb, var(--color-surface) 30%, transparent);
+}
+
+.social-link {
+  @apply text-foreground inline-flex w-fit items-center gap-2 transition-colors duration-200 hover:text-(--color-accent-hover);
+}
+
+@utility glow-shadow-* {
+  box-shadow: 0 0 12px 4px color-mix(in srgb, var(--glow-color) calc(--value(integer) * 1%), transparent);
+}
+
+/*
+   FOOTER GRID
+   xs/sm : "spotify   spotify  "
+           "elsewhere colophon "
+   md    : "spotify   elsewhere"
+           "colophon  elsewhere"
+   lg    : "spotify elsewhere colophon"
+ */
+
+@utility footer-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: auto;
+  grid-template-areas:
+    "spotify"
+    "elsewhere"
+    "colophon";
+}
+@utility footer-grid-sm {
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "spotify  elsewhere"
+    "colophon elsewhere";
+}
+
+@utility footer-grid-lg {
+  grid-template-columns: auto auto auto;
+  grid-template-areas: "spotify elsewhere colophon";
+}

@@ -1,0 +1,52 @@
+---
+import { Image } from "astro:assets"
+import heroImage from "../assets/images/hero_image.jpg"
+import IconReact from "./icons/IconReact.astro"
+import IconTs from "./icons/IconTs.astro"
+import IconTailwindcss from "./icons/IconTailwindcss.astro"
+import IconZed from "./icons/IconZed.astro"
+import IconOpencode from "./icons/IconOpencode.astro"
+---
+
+<section
+  id="hero"
+  class="flex flex-col items-center justify-center px-4 pt-28 pb-8 text-center sm:mt-24 sm:px-6 sm:pt-24 sm:pb-24">
+  <!-- Status badge -->
+  <div
+    class="bg-badge-bg border-badge-border mb-8 inline-flex items-center gap-2 rounded-full border px-3 py-1 md:gap-3">
+    <span class="text-badge-text text-sm font-medium md:text-base">open to new roles</span>
+  </div>
+
+  <!-- Heading -->
+  <h1 class="font-display text-display text-4xl font-semibold sm:text-6xl md:text-7xl lg:text-8xl">
+    <span class="block"
+      >Hey, This is Ahmad
+      <span class="bg-surface inline-block rounded-lg p-0.5 align-top">
+        <Image
+          src={heroImage}
+          alt="Ahmad"
+          class="block size-10 rounded-lg object-cover sm:size-12 md:size-14 lg:size-22"
+        />
+      </span>
+    </span>
+    <span class="block">a Frontend Developer</span>
+  </h1>
+
+  <!-- Tagline -->
+  <div class="text-foreground mt-6 mb-8 max-w-4xl space-y-1 text-sm md:text-base lg:text-lg">
+    <p>Self-taught developer from Alexandria, Egypt with a background in electrical engineering</p>
+    <p>
+      I build and design things that excite me — mostly with
+      <span class="tech-chip"><IconReact class="size-4 md:size-5" /><span>React</span></span>,
+      <span class="tech-chip"><IconTs class="size-4 md:size-5" /><span>TypeScript</span></span>
+      and
+      <span class="tech-chip"><IconTailwindcss class="size-4 md:size-5" /><span>TailwindCSS</span></span>
+    </p>
+    <p>
+      Coding in
+      <span class="tech-chip"><IconZed class="size-4 md:size-5" /><span>Zed</span></span>
+      alongside
+      <span class="tech-chip"><IconOpencode class="size-4 md:size-5" /><span>OpenCode</span></span>
+    </p>
+  </div>
+</section>
