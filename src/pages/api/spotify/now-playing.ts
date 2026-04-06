@@ -27,10 +27,22 @@ const jsonResponse = (body: unknown) =>
 
 export const GET: APIRoute = async () => {
   try {
-    // Get credentials from import.meta.env (works in both wrangler dev and production)
-    const clientId = import.meta.env.SPOTIFY_CLIENT_ID
-    const clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET
-    const refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN
+    // Get credentials - try cloudflare:workers first (production), fall back to import.meta.env (wrangler dev)
+    let clientId: string | undefined
+    let clientSecret: string | undefined
+    let refreshToken: string | undefined
+
+    try {
+      const { env } = await import("cloudflare:workers")
+      clientId = env.SPOTIFY_CLIENT_ID
+      clientSecret = env.SPOTIFY_CLIENT_SECRET
+      refreshToken = env.SPOTIFY_REFRESH_TOKEN
+    } catch {
+      // Fall back to import.meta.env for wrangler dev
+      clientId = import.meta.env.SPOTIFY_CLIENT_ID
+      clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET
+      refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN
+    }
 
     if (!clientId || !clientSecret || !refreshToken) {
       console.error("Missing credentials")
