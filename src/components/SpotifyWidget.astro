@@ -1,25 +1,30 @@
 ---
-import IconSpotify from "./icons/IconSpotify.astro"
-import IconArrowRight from "./icons/IconArrowRight.astro"
+import IconSpotify from "../assets/icons/spotify.svg"
+import IconArrowRight from "../assets/icons/arrow-right.svg"
 ---
 
 <div
   id="sw-card"
-  class="group/card relative flex w-xs max-w-sm items-center gap-2.5 overflow-hidden rounded-lg p-1 pr-3 text-white lg:w-sm">
+  class="group/card relative flex w-xs max-w-sm items-center gap-2.5 overflow-hidden rounded-lg p-1 pr-2 text-white select-none lg:w-sm">
   <!-- Cover Art -->
   <div
     id="sw-art-wrap"
-    class="group-hover/card:glow-shadow-40 size-16.5 shrink-0 overflow-hidden rounded-md transition-shadow duration-300">
-    <img id="sw-art" crossorigin="anonymous" src="" alt="Album cover" class="size-full object-cover" />
+    class="group-hover/card:glow-shadow-40 size-17 shrink-0 overflow-hidden rounded-lg transition-shadow duration-300">
+    <img
+      id="sw-art"
+      crossorigin="anonymous"
+      src=""
+      alt="Album cover"
+      class="size-full object-cover"
+    />
   </div>
   <!-- Track Info -->
   <div class="flex min-w-0 flex-1 flex-col justify-center leading-tight">
     <h4 id="sw-track" class="truncate pr-6 font-semibold tracking-tight text-white"></h4>
-
     <p id="sw-artist" class="truncate pr-6 text-xs font-medium text-white/80"></p>
 
     <!-- Bottom row: album truncates against invite link -->
-    <div class="mt-1 flex items-center gap-2">
+    <div class="mt-2 flex items-center gap-2">
       <p id="sw-album" class="min-w-0 truncate text-xs text-white/60"></p>
 
       <a
@@ -40,7 +45,7 @@ import IconArrowRight from "./icons/IconArrowRight.astro"
 </div>
 
 <script>
-  import { extractGradientColors, fallbackGradient } from "../utils/extract-color"
+  import { extractGradientColors } from "../utils/extract-color"
 
   const POLL_INTERVAL_MS = 30_000
 
@@ -52,15 +57,12 @@ import IconArrowRight from "./icons/IconArrowRight.astro"
     labelText: "On repeat",
     invite: "Listen now",
     artUrl: "https://i.scdn.co/image/ab67616d00001e02982320da137d0de34410df61",
-    ...fallbackGradient
-  } as const
-
-  // Iris dark palette — used when art fails to load and there is no album color to extract
-  const ERROR_GRADIENT = {
-    top: "#262a65", // iris-dark-4
-    bottom: "#171625", // iris-dark-2
-    glow: "#5b5bd6", // iris-dark-9
-    light: "#a5a8f3" // iris-dark-11
+    gradient: {
+      top: "#5d2c10",
+      bottom: "#4a4842",
+      glow: "#ba844f",
+      light: "#d4a87a"
+    }
   } as const
 
   const card = document.getElementById("sw-card") as HTMLElement
@@ -84,21 +86,14 @@ import IconArrowRight from "./icons/IconArrowRight.astro"
     card.style.setProperty("--light-color", colors.light)
   }
 
-  function applyErrorGradient() {
-    card.style.background = `linear-gradient(135deg, ${ERROR_GRADIENT.top}, ${ERROR_GRADIENT.bottom})`
-    card.style.setProperty("--glow-color", ERROR_GRADIENT.glow)
-    card.style.setProperty("--light-color", ERROR_GRADIENT.light)
-  }
-
   function applyFeaturedTrack() {
     track.textContent = FEATURED_TRACK.trackName
     artist.textContent = FEATURED_TRACK.artistName
     album.textContent = FEATURED_TRACK.albumName
     link.href = FEATURED_TRACK.trackUrl
     setInvite(FEATURED_TRACK.invite, FEATURED_TRACK.labelText)
-    artWrap.classList.remove("hidden")
     art.src = FEATURED_TRACK.artUrl
-    applyGradient(fallbackGradient)
+    applyGradient(FEATURED_TRACK.gradient)
   }
 
   async function fetchAndRender() {
@@ -106,7 +101,7 @@ import IconArrowRight from "./icons/IconArrowRight.astro"
       const res = await fetch("/api/spotify/now-playing")
       const data = await res.json()
 
-      if (data.error) {
+      if (data.error || !data.albumArtUrl) {
         applyFeaturedTrack()
         return
       }
@@ -115,22 +110,21 @@ import IconArrowRight from "./icons/IconArrowRight.astro"
       artist.textContent = data.artistName
       album.textContent = data.albumName
       link.href = data.trackUrl
-      setInvite(data.isPlaying ? "listen along" : "Listen now", data.isPlaying ? "Now playing" : "Last played")
+      setInvite(
+        data.isPlaying ? "listen along" : "Listen now",
+        data.isPlaying ? "Now playing" : "Last played"
+      )
 
       const proxiedUrl = `/api/spotify/artwork?url=${encodeURIComponent(data.albumArtUrl)}`
 
       if (art.src !== proxiedUrl) {
         art.onload = async () => {
           const colors = await extractGradientColors(art)
-          applyGradient(colors)
+          if (colors) applyGradient(colors)
         }
-        art.onerror = () => {
-          artWrap.classList.add("hidden")
-          applyErrorGradient()
-        }
+        art.onerror = () => applyFeaturedTrack()
         art.src = proxiedUrl
       }
-      artWrap.classList.remove("hidden")
     } catch {
       applyFeaturedTrack()
     }

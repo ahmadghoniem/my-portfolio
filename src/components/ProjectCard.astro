@@ -1,8 +1,8 @@
 ﻿---
 import { Image } from "astro:assets"
 import type { ImageMetadata } from "astro"
-import IconArrowRight from "./icons/IconArrowRight.astro"
-import IconArrowUpRight from "./icons/IconArrowUpRight.astro"
+import IconArrowRight from "../assets/icons/arrow-right.svg"
+import IconArrowUpRight from "../assets/icons/arrow-up-right.svg"
 
 type CardColor = "violet" | "slate" | "sky" | "yellow"
 
@@ -23,12 +23,13 @@ const { title, description, tags, image, cardColor, quote, citation, ctas, slug 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/projects/*/*", {
   eager: true
 })
-const resolvedImage = image && slug ? images[`/src/assets/projects/${slug}/${image}`]?.default : undefined
+const resolvedImage =
+  image && slug ? images[`/src/assets/projects/${slug}/${image}`]?.default : undefined
 
 const builtWith = new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(tags)
 
 const style = cardColor
-  ? `background-color: var(--card-${cardColor}-bg); --shadow-color: var(--card-${cardColor}-shadow); --card-border-color: var(--${cardColor}-7); --card-halo-shadow: 0 20px 40px -15px color-mix(in srgb, var(--${cardColor}-8) 40%, transparent);`
+  ? `background-color: var(--card-${cardColor}-bg); --shadow-color: var(--card-${cardColor}-shadow); --card-border-color: var(--${cardColor}-7);`
   : undefined
 
 type ResolvedCta = { label: string; href: string; isInternal: boolean; linkClass: string }
@@ -40,17 +41,16 @@ const resolvedCtas: ResolvedCta[] = (ctas ?? []).map((cta) => ({
 ---
 
 <article
-  class="relative flex w-full flex-col overflow-hidden rounded-2xl shadow-md transition-shadow duration-200 ease-out hover:shadow-[var(--card-halo-shadow)] lg:h-96 lg:flex-row"
+  class="relative flex w-full flex-col overflow-hidden rounded-2xl shadow-sm transition-shadow duration-200 ease-out hover:shadow-md lg:h-96 lg:flex-row"
   style={style}
-  data-card={cardColor}
->
+  data-card={cardColor}>
   <!-- Left: text -->
   <div class="flex flex-1 flex-col justify-between p-4 md:p-6 md:pb-4 lg:p-6">
     <div>
       <h3 class="font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
         {title}
       </h3>
-      <p class="mt-2 max-w-md text-sm leading-relaxed sm:text-base lg:mt-3">
+      <p class="mt-2 max-w-md text-sm/relaxed sm:text-base lg:mt-3">
         {description}
       </p>
 
@@ -58,9 +58,8 @@ const resolvedCtas: ResolvedCta[] = (ctas ?? []).map((cta) => ({
         quote && (
           <blockquote
             class="border-border mt-3 border-l-2 pl-4 lg:mt-4"
-            style="border-color: var(--card-border-color, var(--color-border));"
-          >
-            <p class="text-muted text-xs leading-relaxed sm:text-sm">&ldquo;{quote}&rdquo;</p>
+            style="border-color: var(--card-border-color, var(--color-border));">
+            <p class="text-muted text-xs/relaxed sm:text-sm">&ldquo;{quote}&rdquo;</p>
             {citation && (
               <cite class="text-tertiary mt-1.5 block text-xs not-italic">&mdash; {citation}</cite>
             )}
@@ -83,8 +82,7 @@ const resolvedCtas: ResolvedCta[] = (ctas ?? []).map((cta) => ({
               <a
                 href={cta.href}
                 class={`${cta.linkClass} text-sm sm:text-base`}
-                {...(!cta.isInternal && { target: "_blank", rel: "noopener noreferrer" })}
-              >
+                {...(!cta.isInternal && { target: "_blank", rel: "noopener noreferrer" })}>
                 {cta.label}
                 <span class="arrow">
                   {cta.isInternal ? (
@@ -109,8 +107,7 @@ const resolvedCtas: ResolvedCta[] = (ctas ?? []).map((cta) => ({
           <a
             href={cta.href}
             class={`${cta.linkClass} text-sm sm:text-base`}
-            {...(!cta.isInternal && { target: "_blank", rel: "noopener noreferrer" })}
-          >
+            {...(!cta.isInternal && { target: "_blank", rel: "noopener noreferrer" })}>
             {cta.label}
             <span class="arrow">
               {cta.isInternal ? (

@@ -12,54 +12,69 @@ tags:
   - ShadcnUI
   - TailwindCSS
 image: "serialblocks.jpg"
+video: "serialblocks.webm"
 ctas:
   - label: "View online"
     href: "https://serialblocks-app.vercel.app/"
   - label: "Read more"
     href: "/projects/serialblocks"
 order: 2
+github: "https://github.com/Serialblocks"
 ---
+For my graduation project as an electrical engineering student, our team was set on retrofitting a mechanical UTM with digital instrumentation. We hit a wall early: funding for the necessary components never came through.
 
-I built SerialBlocks as my graduation project proof of concept — a browser-based serial monitor that lets you read and write to hardware connected to any machine on your network. It started as a 48-hour sprint and turned into something I still use almost daily when working with Arduinos and ESP32s.
+We weren’t going to show up empty-handed. If we couldn’t build the system, we’d build its interface.
 
-The core idea is simple: connect to a serial port from the browser, visualize incoming data in real-time, and send commands back — all without installing native software. The execution required solving some interesting problems around state management, per-client isolation, and cross-tab synchronization.
+The original plan was to rely on C# Windows Forms — functional, but limiting. You’re largely constrained by what the framework allows. I saw a better path. With a background in web development, I knew the browser offered far more flexibility in how you shape and present data.
 
-## Architecture
+So instead of depending on a desktop tool, I built one from scratch. Within 48 hours, I had a working prototype: a full-stack React and Node.js app using Socket.IO to stream real-time serial data from a microcontroller into a live browser chart.
 
-![Architecture diagram](/src/assets/projects/serialblocks/serialblocks_gettingStarted.svg)
+It had real potential beyond a prototype. That became SerialBlocks: a tool that lets you read from and write to hardware connected to any machine on your network — all from a browser tab.
 
-The architecture separates concerns into three distinct layers. The frontend is a React SPA built with Zustand for state management and ShadcnUI for components. The backend runs a Socket.IO server that manages serial connections and broadcasts data to connected clients. Each client's socket connection carries their serial configuration — port path, baud rate, delimiter, and EOL character — as authentication data.
+## Getting started
 
-When a client opens a port, the server instantiates a dedicated `SerialPort` object bound to that socket. Data flows from the microcontroller through the serial port, gets parsed on the server, and emits real-time updates to the owning client. The client's Zustand store receives these updates and renders them through a modular block system where each block subscribes only to the data it needs.
+SerialBlocks has two parts: the app, which runs in your browser, and a local server that runs on the machine your hardware is connected to.
+![Getting started diagram](/src/assets/projects/serialblocks/getting_started_diagram.svg)
 
-## Notable Technical Decisions
+To help you get up and running, there's a starter repository with example MCU code for both STM32 and Arduino UNO — covering how to structure your serial output so SerialBlocks can parse it correctly.
+
+## How it works
+
+
+Data moves through three layers. The microcontroller reads a sensor value, serializes it to JSON, and writes it to the UART buffer. The local server receives it over USB, parses it line by line, and emits it over a WebSocket. The browser picks it up, runs it through Immer and Zustand, and updates only the blocks that need to change.
+
+![How it works diagram](/src/assets/projects/serialblocks/how_it_works_diagram.svg)
+
+Writing flows in the reverse direction. When a user interacts with a block—such as toggling an LED or setting an RGB value—the block triggers writeToPort(), which sends the command through a WebSocket to the local server. The server then appends an end-of-line (EOL) character and forwards it to the serial port. On the microcontroller side, the UART interrupt handler receives the data, parses it, and executes the corresponding action. A simple command like LED_TOGGLE is enough to flip a pin state.
+
+## Technical highlights
 
 ### Granular re-renders with Zustand selectors and Immer
 
-![Zustand and Immer diagram](/src/assets/projects/serialblocks/serialblocks_zustand_immer.svg)
-
 With sensor data arriving every second, the naive approach would re-render the entire dashboard on every update. SerialBlocks avoids this with two layers working together.
 
-Each block subscribes to only its own slice of state through a Zustand selector — `useSerialStore(store => store.serialData.humidity)` instead of the whole store. This means when `serialData.humidity` updates, the Humidity block re-renders, and the LED, Processor, and LineChart blocks don't even know an update happened.
+![Granular re-renders diagram](/src/assets/projects/serialblocks/granular_rerenders_diagram.svg)
 
-The second layer is Immer's `produce()` in the store's `parsedData` handler. When the microcontroller sends a value that hasn't changed — say humidity is still 65 — Immer detects the value is identical and doesn't create a new object reference. Zustand sees the same reference and skips the re-render entirely. The selector handles isolation across blocks; Immer handles the case where the same block receives identical data.
+Zustand selectors — Each block subscribes only to its own slice of state.
+
+Immer `produce()` — When the microcontroller sends a value that hasn't changed, Immer detects it and returns the same object reference. Zustand sees no change and skips the re-render entirely.
 
 The two layers are both necessary. A selector alone won't prevent a re-render if the state writer keeps producing new object references. Immer alone won't prevent a block from re-rendering when an unrelated block's data changes.
 
 ### Per-client SerialPort instances
 
-![Per-client SerialPort diagram](/src/assets/projects/serialblocks/serialblocks_per_client.svg)
+![Per-client SerialPort diagram](/src/assets/projects/serialblocks/per_client_diagram.svg)
 
-Most web-based serial monitors use a single shared serial connection on the server. SerialBlocks takes a different approach: each Socket.IO connection gets its own dedicated `SerialPort` instance, scoped to that client's connection closure.
+Most web-based serial monitors rely on a single shared serial connection on the server. SerialBlocks takes a different approach: each `Socket.IO` connection is assigned its own dedicated `SerialPort` instance, scoped to that client’s connection lifecycle.
 
-When a client connects, it sends its full configuration — port path, baud rate, delimiter, EOL character — as Socket.IO handshake auth. The server uses that config to instantiate a `SerialPort` object bound to that specific socket. When the socket closes, the instance is garbage collected. There's no global serial state, no shared resource, no risk of one client's writes interleaving with another's.
+When a client connects, it sends its full configuration—port path, baud rate, delimiter, and EOL character—through Socket.IO `handshake.auth`. The server uses this to instantiate a SerialPort bound exclusively to that socket. When the connection closes, the instance is discarded. There is no global serial state, no shared resource, and no risk of interleaved writes between clients.
 
-Error handling is also scoped per client. If Client A's port errors or disconnects unexpectedly, the server emits the error back to Client A's socket only, then broadcasts a notification to all other connected clients. Client B continues operating normally. The tradeoff is resource usage — N clients means N SerialPort instances — but for a local tool talking to hardware, this is the correct isolation boundary.
+Error handling is also isolated per client. If Client A's port fails or disconnects unexpectedly, the server emits the error only to that client's socket, while broadcasting a notification to all other connected clients. Client B continues operating normally.
 
 ### Cross-tab state sync with `use-broadcast-ts`
 
-User preferences in SerialBlocks — server URL, display name, port config, theme — need to stay consistent across every open tab. Without synchronization, changing the server URL in one tab would leave other tabs pointing at a stale connection.
+Cross-tab state sync is handled with `use-broadcast-ts`. In SerialBlocks, user preferences like server URL, display name, port config, and theme must stay consistent across all open tabs—otherwise one tab could end up connected to a stale endpoint.
 
-The `UserStore` wraps Zustand with `shared()` from `use-broadcast-ts`, which uses the browser's native Broadcast Channel API. When any tab writes to the store — updating the display name, switching themes, changing the remote URL — the Broadcast Channel broadcasts the change to every other tab with the same origin instantly. No polling, no storage I/O during updates, no manual sync logic. The `persist` middleware handles localStorage separately so state survives page refreshes.
+The User store wraps Zustand with `shared()` from `use-broadcast-ts`, which uses the browser's Broadcast Channel API. Any update—theme, identity, or server URL—is instantly broadcast to all tabs under the same origin, with no polling, storage events, or manual sync logic. persist still handles localStorage separately to preserve state across refreshes.
 
-The practical effect: changing the server URL in one tab triggers a Socket.IO reconnect with the new auth in every other tab simultaneously. All clients stay in agreement about who they are and where they're connecting.
+In practice, changing the server URL in one tab immediately triggers a Socket.IO reconnect in all others, keeping every client in sync on identity and connection state.

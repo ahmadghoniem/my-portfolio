@@ -15,6 +15,10 @@ const getAlbumArtUrl = (images: any[]): string => {
   return (images[1] ?? images[0])?.url ?? ""
 }
 
+const isLocalTrack = (item: any): boolean => {
+  return item?.uri?.startsWith("spotify:local:") ?? false
+}
+
 const jsonResponse = (body: unknown) =>
   new Response(JSON.stringify(body), {
     status: 200,
@@ -27,7 +31,6 @@ const jsonResponse = (body: unknown) =>
 
 export const GET: APIRoute = async () => {
   try {
-    // Get credentials - try cloudflare:workers first (production), fall back to import.meta.env (wrangler dev)
     let clientId: string | undefined
     let clientSecret: string | undefined
     let refreshToken: string | undefined
@@ -38,14 +41,13 @@ export const GET: APIRoute = async () => {
       clientSecret = env.SPOTIFY_CLIENT_SECRET
       refreshToken = env.SPOTIFY_REFRESH_TOKEN
     } catch {
-      // Fall back to import.meta.env for wrangler dev
       clientId = import.meta.env.SPOTIFY_CLIENT_ID
       clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET
       refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN
     }
 
     if (!clientId || !clientSecret || !refreshToken) {
-      console.error("Missing credentials")
+      console.error("Missing Spotify credentials")
       return jsonResponse({ error: true, reason: "missing_credentials" })
     }
 
@@ -69,23 +71,23 @@ export const GET: APIRoute = async () => {
       return jsonResponse({ error: true, reason: "token_failed" })
     }
 
-    const tokenData = await tokenResponse.json() as { access_token?: string }
-    
+    const tokenData = (await tokenResponse.json()) as { access_token?: string }
+
     if (!tokenData.access_token) {
       return jsonResponse({ error: true, reason: "no_access_token" })
     }
 
     const accessToken = tokenData.access_token
 
-    // 1. Fetch Currently Playing
+    // 1. Fetch Currently Playing — skip if it's a local file
     const nowPlayingRes = await fetch(NOW_PLAYING_ENDPOINT, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
 
     if (nowPlayingRes.status === 200) {
-      const song = await nowPlayingRes.json() as any
+      const song = (await nowPlayingRes.json()) as any
 
-      if (song?.item && song.is_playing) {
+      if (song?.item && song.is_playing && !isLocalTrack(song.item)) {
         return jsonResponse({
           isPlaying: true,
           trackName: song.item.name,
@@ -97,13 +99,13 @@ export const GET: APIRoute = async () => {
       }
     }
 
-    // 2. Fallback to Recently Played
+    // 2. Fallback to Recently Played (always shows a real Spotify track with artwork)
     const recentlyPlayedRes = await fetch(RECENTLY_PLAYED_ENDPOINT, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
 
     if (recentlyPlayedRes.status === 200) {
-      const data = await recentlyPlayedRes.json() as any
+      const data = (await recentlyPlayedRes.json()) as any
       const song = data.items[0]
 
       if (song) {

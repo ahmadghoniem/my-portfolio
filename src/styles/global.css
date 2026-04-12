@@ -1,9 +1,7 @@
 @import "tailwindcss";
 @import "@radix-ui/colors/slate.css";
 @import "@radix-ui/colors/sand.css";
-@import "@radix-ui/colors/amber.css";
 @import "@radix-ui/colors/iris.css";
-@import "@radix-ui/colors/teal.css";
 @import "@radix-ui/colors/violet.css";
 @import "@radix-ui/colors/sky.css";
 @import "@radix-ui/colors/yellow.css";
@@ -16,7 +14,7 @@
   --font-body: "Geist", sans-serif;
 
   --color-background: var(--sand-2);
-  --color-surface: var(--slate-2);
+  --color-surface: var(--sand-3);
   --color-border: var(--slate-5);
   --color-border-ui: var(--slate-7);
   --color-border-hover: var(--slate-8);
@@ -36,6 +34,8 @@
 
   --color-nav-pill: var(--iris-3);
   --color-nav-active: var(--iris-4);
+
+  --color-heart: var(--red-9);
 }
 
 :root {
@@ -82,10 +82,6 @@
   }
 }
 
-/*
-   LINK SYSTEM
- */
-
 @utility link-external {
   text-decoration: none;
   font-weight: 500;
@@ -115,10 +111,6 @@
   transition: transform 0.2s ease-in-out;
 }
 
-/*
-   NAV
- */
-
 @utility nav-link {
   @apply text-muted flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
 
@@ -131,32 +123,21 @@
   @apply text-muted hover:text-foreground flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
 }
 
-.tech-chip {
+@utility tech-chip {
   @apply border-border inline-flex items-center gap-1.5 rounded-md border px-1.5 align-middle;
   background-color: color-mix(in srgb, var(--color-surface) 30%, transparent);
 }
 
-.social-link {
-  @apply text-foreground inline-flex w-fit items-center gap-2 transition-colors duration-200 hover:text-(--color-accent-hover);
-}
-
 @utility glow-shadow-* {
-  box-shadow: 0 0 12px 4px color-mix(in srgb, var(--glow-color) calc(--value(integer) * 1%), transparent);
+  box-shadow: 0 0 12px 4px
+    color-mix(in srgb, var(--glow-color) calc(--value(integer) * 1%), transparent);
 }
-
-/*
-   FOOTER GRID
-   xs/sm : "spotify   spotify  "
-           "elsewhere colophon "
-   md    : "spotify   elsewhere"
-           "colophon  elsewhere"
-   lg    : "spotify elsewhere colophon"
- */
 
 @utility footer-grid {
   display: grid;
   gap: 2rem;
   grid-template-columns: auto;
+  justify-content: center;
   grid-template-areas:
     "spotify"
     "elsewhere"
@@ -164,6 +145,7 @@
 }
 @utility footer-grid-sm {
   grid-template-columns: auto auto;
+  justify-content: normal;
   grid-template-areas:
     "spotify  elsewhere"
     "colophon elsewhere";
@@ -171,5 +153,6 @@
 
 @utility footer-grid-lg {
   grid-template-columns: auto auto auto;
+  justify-content: space-between;
   grid-template-areas: "spotify elsewhere colophon";
 }

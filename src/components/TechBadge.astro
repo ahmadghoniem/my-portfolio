@@ -1,20 +1,21 @@
 ---
-import IconReact from "./icons/IconReact.astro"
-import IconTs from "./icons/IconTs.astro"
-import IconTailwindcss from "./icons/IconTailwindcss.astro"
-import IconChrome from "./icons/IconChrome.astro"
-import IconHardhat from "./icons/IconHardhat.astro"
-import IconRainbowKit from "./icons/IconRainbowKit.astro"
-import IconSanity from "./icons/IconSanity.astro"
-import IconSocketIO from "./icons/IconSocketIO.astro"
-import IconSupabase from "./icons/IconSupabase.astro"
-import IconViem from "./icons/IconViem.astro"
-import IconWagmi from "./icons/IconWagmi.astro"
-import IconRecharts from "./icons/IconRecharts.astro"
-import IconAstro from "./icons/IconAstro.astro"
-import IconNodejs from "./icons/IconNodejs.astro"
-import IconShadcn from "./icons/IconShadcn.astro"
-import IconSerialport from "./icons/IconSerialport.astro"
+import IconReact from "../assets/icons/react.svg"
+import IconTs from "../assets/icons/typescript.svg"
+import IconTailwindcss from "../assets/icons/tailwindcss.svg"
+import IconChrome from "../assets/icons/chrome.svg"
+import IconHardhat from "../assets/icons/hardhat.svg"
+import IconRainbowKit from "../assets/icons/rainbowkit.svg"
+import IconSanity from "../assets/icons/sanity.svg"
+import IconSocketIO from "../assets/icons/socketio.svg"
+import IconSupabase from "../assets/icons/supabase.svg"
+import IconViem from "../assets/icons/viem.svg"
+import IconWagmi from "../assets/icons/wagmi.svg"
+import IconRecharts from "../assets/icons/recharts.svg"
+import IconAstro from "../assets/icons/astro.svg"
+import IconNodejs from "../assets/icons/nodejs.svg"
+import IconShadcn from "../assets/icons/shadcn.svg"
+import IconSerialport from "../assets/icons/serialport.svg"
+import IconLexical from "../assets/icons/lexical.svg"
 import zustandLogo from "../assets/images/tech/zustand.png"
 
 interface Props {
@@ -45,6 +46,7 @@ const iconMap: Record<string, IconEntry> = {
   serialport: { type: "component", icon: IconSerialport },
   node: { type: "component", icon: IconNodejs },
   shadcn: { type: "component", icon: IconShadcn },
+  lexical: { type: "component", icon: IconLexical },
   zustand: { type: "image", src: zustandLogo.src }
 }
 
@@ -53,9 +55,13 @@ const match = key ? iconMap[key] : null
 ---
 
 <span
-  class="border-border text-foreground inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium"
-  class:list={[{ "pl-2": !!match }]}>
+  class="border-border text-foreground inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-sm sm:px-3 sm:py-1"
+  class:list={[{ "pl-1.5": !!match }]}>
   {match?.type === "component" && <match.icon class="size-4 shrink-0" />}
-  {match?.type === "image" && <img src={match.src} alt="" class="size-4 shrink-0 object-contain" aria-hidden="true" />}
+  {
+    match?.type === "image" && (
+      <img src={match.src} alt="" class="size-4 shrink-0 object-contain" aria-hidden="true" />
+    )
+  }
   <span>{tag}</span>
 </span>

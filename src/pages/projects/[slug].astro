@@ -4,8 +4,8 @@ import { Image } from "astro:assets"
 import type { ImageMetadata } from "astro"
 import Layout from "../../layouts/Layout.astro"
 import TechBadge from "../../components/TechBadge.astro"
-import IconArrowRight from "../../components/icons/IconArrowRight.astro"
-import IconArrowUpRight from "../../components/icons/IconArrowUpRight.astro"
+import IconArrowRight from "../../assets/icons/arrow-right.svg"
+import IconArrowUpRight from "../../assets/icons/arrow-up-right.svg"
 
 export const prerender = true
 
@@ -25,7 +25,7 @@ if (!project) {
 
 const { Content } = await render(project)
 
-const { title, description, overview, tags, video, image, github, ctas, quote, citation, socialProof } = project.data
+const { title, description, tags, video, image, github, ctas, quote, citation, socialProof } = project.data
 
 // Import project assets
 const projectAssets = import.meta.glob<{ default: ImageMetadata }>("/src/assets/projects/*/*", { eager: true })
@@ -79,9 +79,9 @@ const nextProject = sorted[currentIndex + 1] ?? null
         </div>
       </div>
 
-      <!-- Overview -->
+      <!-- Description -->
       <p class="text-muted mb-6 text-base leading-relaxed sm:text-lg">
-        {overview ?? description}
+        {description}
       </p>
 
       <!-- Tech badges with icons -->
@@ -92,14 +92,17 @@ const nextProject = sorted[currentIndex + 1] ?? null
       <!-- Video / image -->
       {
         (video || image) && (
-          <div class="border-border bg-surface mb-12 overflow-hidden rounded-2xl border">
-            {video && projectVideo ? (
-              <video autoplay muted loop playsinline class="w-full object-cover">
-                <source src={projectVideo.default} type="video/webm" />
-              </video>
-            ) : projectImage ? (
-              <Image src={projectImage.default} alt={`${title} in action`} class="w-full object-cover" />
-            ) : null}
+          <div class="mb-12">
+            <!-- Video container -->
+            <div class="border-border bg-surface overflow-hidden rounded-md border">
+              {video && projectVideo ? (
+                <video controls loop playsinline class="w-full object-cover">
+                  <source src={projectVideo.default} type="video/webm" />
+                </video>
+              ) : projectImage ? (
+                <Image src={projectImage.default} alt={`${title} in action`} class="w-full object-cover" />
+              ) : null}
+            </div>
           </div>
         )
       }
@@ -109,31 +112,18 @@ const nextProject = sorted[currentIndex + 1] ?? null
         <Content />
       </div>
 
-      <!-- Divider -->
-      <hr class="border-border my-12" />
-
-      <!-- Quote -->
+      <!-- Divider + Quote -->
       {
         quote && (
-          <figure class="mb-8">
-            <blockquote class="border-accent-border border-l-2 pl-5">
-              <p class="text-foreground text-base leading-relaxed sm:text-lg">&ldquo;{quote}&rdquo;</p>
-            </blockquote>
-            {citation && <figcaption class="text-muted mt-3 pl-5 text-sm">&mdash; {citation}</figcaption>}
-          </figure>
-        )
-      }
-
-      <!-- Reddit / social proof screenshots -->
-      {
-        socialProof && socialProof.length > 0 && (
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {socialProof.map((src: string) => (
-              <div class="border-border bg-surface overflow-hidden rounded-xl border">
-                <img src={`/images/projects/social/${src}`} alt="Community feedback" class="w-full object-cover" />
-              </div>
-            ))}
-          </div>
+          <>
+            <hr class="border-border my-12" />
+            <figure class="mb-8">
+              <blockquote class="border-accent-border border-l-2 pl-5">
+                <p class="text-foreground text-base leading-relaxed sm:text-lg">&ldquo;{quote}&rdquo;</p>
+              </blockquote>
+              {citation && <figcaption class="text-muted mt-3 pl-5 text-sm">&mdash; {citation}</figcaption>}
+            </figure>
+          </>
         )
       }
 
@@ -155,53 +145,56 @@ const nextProject = sorted[currentIndex + 1] ?? null
 </Layout>
 
 <style is:global>
+
+.project-content p {
+  text-wrap: pretty;
+  font-family: var(--font-body);
+  color: var(--color-foreground);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  margin-bottom: 1.25rem;
+  max-width: 65ch;
+}
+
+.project-content h2 {
+  font-family: var(--font-ui);
+  color: var(--color-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  max-width: 65ch;
+  margin-top: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-content h3 {
+  font-family: var(--font-ui);
+  color: var(--color-foreground);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  max-width: 65ch;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-content code {
+  background-color: var(--slate-3);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  padding: 0.125rem 0.375rem;
+}
+
+@media (min-width: 640px) {
   .project-content p {
-    font-family: var(--font-body);
-    color: var(--color-foreground);
-    font-size: 1rem;
-    line-height: 1.625;
-    margin-bottom: 1.25rem;
-    max-width: 65ch;
+    font-size: var(--text-lg);
   }
-
   .project-content h2 {
-    font-family: var(--font-ui);
-    color: var(--color-display);
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-top: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--text-2xl);
   }
-
   .project-content h3 {
-    font-family: var(--font-ui);
-    color: var(--color-foreground);
-    font-size: 1.0625rem;
-    font-weight: 600;
-    margin-top: 1.75rem;
-    margin-bottom: 0.375rem;
+    font-size: var(--text-xl);
   }
-
-  .project-content code {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-    padding: 0.125rem 0.375rem;
-  }
-
-  .project-content p:has(img),
-  .project-content img {
-    max-width: var(--container-4xl);
-  }
-
-  @media (min-width: 640px) {
-    .project-content p {
-      font-size: 1.125rem;
-    }
-
-    .project-content h2 {
-      font-size: 1.375rem;
-    }
-  }
+}
 </style>
