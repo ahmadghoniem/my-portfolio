@@ -24,7 +24,6 @@
   --color-muted: var(--slate-11);
   --color-tertiary: var(--slate-9);
 
-  --color-accent-bg-subtle: var(--iris-3);
   --color-badge-bg: var(--iris-4);
   --color-badge-border: var(--iris-5);
   --color-accent-border: var(--iris-5);
@@ -126,11 +125,6 @@
 @utility tech-chip {
   @apply border-border inline-flex items-center gap-1.5 rounded-md border px-1.5 align-middle;
   background-color: color-mix(in srgb, var(--color-surface) 30%, transparent);
-}
-
-@utility glow-shadow-* {
-  box-shadow: 0 0 12px 4px
-    color-mix(in srgb, var(--glow-color) calc(--value(integer) * 1%), transparent);
 }
 
 @utility footer-grid {

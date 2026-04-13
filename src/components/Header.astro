@@ -22,20 +22,8 @@ const p = (hash: string) => (isHome ? hash : `/${hash}`)
       <li>
         <a href={p("#outro")} data-section="outro" class="nav-link">Connect</a>
       </li>
-      <li class="group">
-        <a
-          href="https://ahmadghoniem.cv/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="nav-link-external gap-1 font-medium"
-        >
-          Resume
-          <span
-            class="inline-block transition-transform duration-200 ease-in-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          >
-            <IconArrowUpRight class="size-3.5" />
-          </span>
-        </a>
+      <li>
+        <a href="/resume" target="_blank" rel="noopener noreferrer" class="nav-link">Resume</a>
       </li>
     </ul>
   </nav>
