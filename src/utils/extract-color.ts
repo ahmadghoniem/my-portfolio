@@ -1,7 +1,7 @@
 import { Vibrant } from "node-vibrant/browser"
 
 export async function extractGradientColors(
-  source: string | HTMLImageElement
+  source: string
 ): Promise<{ top: string; bottom: string; glow: string; light: string } | undefined> {
   const palette = await Vibrant.from(source).getPalette()
   const top = palette.DarkVibrant?.hex ?? palette.Vibrant?.hex

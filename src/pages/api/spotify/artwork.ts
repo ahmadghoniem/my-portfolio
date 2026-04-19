@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ request }) => {
       headers: {
         "Content-Type": contentType,
         "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=86400"
+        "Cache-Control": "public, max-age=3600"
       }
     })
   } catch (error) {

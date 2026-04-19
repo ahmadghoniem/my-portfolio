@@ -70,7 +70,6 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
     } as const
 
     const card = document.getElementById("sw-card") as HTMLElement
-    const artWrap = document.getElementById("sw-art-wrap") as HTMLElement
     const art = document.getElementById("sw-art") as HTMLImageElement
     const track = document.getElementById("sw-track") as HTMLElement
     const artist = document.getElementById("sw-artist") as HTMLElement
@@ -100,6 +99,14 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
       applyGradient(FEATURED_TRACK.gradient)
     }
 
+    function loadImage(img: HTMLImageElement, src: string): Promise<void> {
+      return new Promise((resolve) => {
+        if (img.complete) { img.src = src; resolve(); return }
+        img.onload = () => resolve()
+        img.src = src
+      })
+    }
+
     async function fetchAndRender() {
       try {
         const res = await fetch("/api/spotify/now-playing")
@@ -120,13 +127,14 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
         )
 
         const proxiedUrl = `/api/spotify/artwork?url=${encodeURIComponent(data.albumArtUrl)}`
-
-        if (art.src !== proxiedUrl) {
-          art.onload = async () => {
-            const colors = await extractGradientColors(art)
-            if (colors) applyGradient(colors)
-          }
-          art.src = proxiedUrl
+        try {
+          const [, colors] = await Promise.all([
+            loadImage(art, proxiedUrl),
+            extractGradientColors(proxiedUrl)
+          ])
+          if (colors) applyGradient(colors)
+        } catch (e) {
+          console.warn("Color extraction failed:", e)
         }
       } catch {
         applyFeaturedTrack()
