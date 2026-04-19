@@ -5,14 +5,25 @@ import Footer from "../components/Footer.astro"
 
 interface Props {
   title?: string
+  description?: string
 }
-
-const { title = "Ahmad Ghoniem | Frontend Developer" } = Astro.props
+const {
+  title = "Ahmad Ghoniem | Frontend Developer",
+  description = "Ahmad Ghoniem is a Self-taught Frontend Developer from Alexandria, Egypt."
+} = Astro.props
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="viewport" content="width=device-width" />
     <script type="text/javascript">
       ;(function (c, l, a, r, i, t, y) {
         c[a] =
@@ -27,11 +38,6 @@ const { title = "Ahmad Ghoniem | Frontend Developer" } = Astro.props
         y.parentNode.insertBefore(t, y)
       })(window, document, "clarity", "script", "w9ii9twh6c")
     </script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
   </head>
   <body class="font-ui bg-background text-foreground antialiased">
     <Header />

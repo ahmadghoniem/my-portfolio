@@ -23,7 +23,7 @@ github: "https://github.com/ahmadghoniem/DigiAbdelArt-astro"
 DigiAbdel Art is built with Static Site Generation rather than Server-Side Rendering — a deliberate architectural decision. With SSR, the server would rebuild and serve each page on every visitor request, which adds cost and latency at scale. With SSG, all pages are built once into plain HTML and served instantly from Vercel's edge network, making the site fast and essentially free to run regardless of traffic.
 The content is managed through Sanity Studio. Whenever the artist wants to add or update a piece, he does it through the Sanity dashboard. Rather than triggering an automatic rebuild on every save, a custom Deploy tab was integrated directly into the Sanity Studio interface — it uses Vercel's deploy hook URL to kick off a new build on demand. The site only rebuilds when the artist explicitly chooses to publish changes, keeping the process intentional and controlled. Every visitor then gets the exact same pre-built pages until the next deploy.
 
-![Sanity Dashboard](/src/assets/projects/digiabdel/digiabdelart_sanity.png)
+![Sanity Dashboard](../../assets/projects/digiabdel/digiabdelart_sanity.png)
 
 ## Technical highlights
 

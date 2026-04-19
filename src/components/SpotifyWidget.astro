@@ -20,20 +20,26 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
   </div>
   <!-- Track Info -->
   <div class="flex min-w-0 flex-1 flex-col justify-center leading-tight">
-    <h4 id="sw-track" class="truncate pr-6 font-semibold tracking-tight text-white"></h4>
-    <p id="sw-artist" class="truncate pr-6 text-xs font-medium text-white/80"></p>
+    <!-- Track Title -->
+    <h4 id="sw-track" class="truncate pr-6 font-semibold text-white"></h4>
 
-    <!-- Bottom row: album truncates against invite link -->
-    <div class="mt-2 flex items-center gap-2 text-white/70">
-      <p id="sw-album" class="min-w-0 truncate text-xs"></p>
+    <!-- Artist -->
+    <span class="opacity-80">
+      <span id="sw-artist" class="block truncate pr-6 text-xs font-medium text-white"> </span>
+    </span>
+
+    <!-- Album + Link Row -->
+    <div class="mt-2 flex items-center gap-2">
+      <span class="opacity-65">
+        <span id="sw-album" class="block min-w-0 truncate text-xs text-white"></span>
+      </span>
       <a
         id="sw-link"
         href="#"
         target="_blank"
         rel="noopener noreferrer"
-        class="group/link ml-auto flex shrink-0 items-center gap-1 text-xs transition-colors hover:text-white">
+        class="group/link ml-auto flex shrink-0 items-center gap-1 text-xs text-white/65 transition-colors hover:text-white">
         <span id="sw-invite"></span>
-
         <span class="inline-block transition-transform group-hover/link:translate-x-0.5">
           <IconArrowRight class="size-3" />
         </span>
@@ -41,94 +47,94 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
     </div>
   </div>
   <IconSpotify class="absolute top-2 right-2 size-4 text-(--light-color)/40" />
-</div>
 
-<script>
-  import { extractGradientColors } from "../utils/extract-color"
+  <script>
+    import { extractGradientColors } from "../utils/extract-color"
 
-  const POLL_INTERVAL_MS = 30_000
+    const POLL_INTERVAL_MS = 30_000
 
-  const FEATURED_TRACK = {
-    trackName: "Niagara Falls",
-    artistName: "The Weeknd",
-    albumName: "Hurry Up Tomorrow",
-    trackUrl: "https://open.spotify.com/track/2v0AG62ZHtD3I4YmTb3WYM",
-    labelText: "On repeat",
-    invite: "Listen now",
-    artUrl: "https://i.scdn.co/image/ab67616d00001e02982320da137d0de34410df61",
-    gradient: {
-      top: "#5d2c10",
-      bottom: "#4a4842",
-      glow: "#ba844f",
-      light: "#d4a87a"
-    }
-  } as const
-
-  const card = document.getElementById("sw-card") as HTMLElement
-  const artWrap = document.getElementById("sw-art-wrap") as HTMLElement
-  const art = document.getElementById("sw-art") as HTMLImageElement
-  const track = document.getElementById("sw-track") as HTMLElement
-  const artist = document.getElementById("sw-artist") as HTMLElement
-  const album = document.getElementById("sw-album") as HTMLElement
-  const link = document.getElementById("sw-link") as HTMLAnchorElement
-  const invite = document.getElementById("sw-invite") as HTMLElement
-
-  function setInvite(cardText: string, labelText: string) {
-    invite.textContent = cardText
-    const footerLabel = document.getElementById("sw-footer-label")
-    if (footerLabel) footerLabel.textContent = labelText
-  }
-
-  function applyGradient(colors: { top: string; bottom: string; glow: string; light: string }) {
-    card.style.background = `linear-gradient(135deg, ${colors.top}, ${colors.bottom})`
-    card.style.setProperty("--glow-color", colors.glow)
-    card.style.setProperty("--light-color", colors.light)
-  }
-
-  function applyFeaturedTrack() {
-    track.textContent = FEATURED_TRACK.trackName
-    artist.textContent = FEATURED_TRACK.artistName
-    album.textContent = FEATURED_TRACK.albumName
-    link.href = FEATURED_TRACK.trackUrl
-    setInvite(FEATURED_TRACK.invite, FEATURED_TRACK.labelText)
-    art.src = FEATURED_TRACK.artUrl
-    applyGradient(FEATURED_TRACK.gradient)
-  }
-
-  async function fetchAndRender() {
-    try {
-      const res = await fetch("/api/spotify/now-playing")
-      const data = await res.json()
-
-      if (data.error || !data.albumArtUrl) {
-        applyFeaturedTrack()
-        return
+    const FEATURED_TRACK = {
+      trackName: "Niagara Falls",
+      artistName: "The Weeknd",
+      albumName: "Hurry Up Tomorrow",
+      trackUrl: "https://open.spotify.com/track/2v0AG62ZHtD3I4YmTb3WYM",
+      labelText: "On repeat",
+      invite: "Listen now",
+      artUrl: "https://i.scdn.co/image/ab67616d00001e02982320da137d0de34410df61",
+      gradient: {
+        top: "#5d2c10",
+        bottom: "#4a4842",
+        glow: "#ba844f",
+        light: "#d4a87a"
       }
+    } as const
 
-      track.textContent = data.trackName
-      artist.textContent = data.artistName
-      album.textContent = data.albumName
-      link.href = data.trackUrl
-      setInvite(
-        data.isPlaying ? "listen along" : "Listen now",
-        data.isPlaying ? "Now playing" : "Last played"
-      )
+    const card = document.getElementById("sw-card") as HTMLElement
+    const artWrap = document.getElementById("sw-art-wrap") as HTMLElement
+    const art = document.getElementById("sw-art") as HTMLImageElement
+    const track = document.getElementById("sw-track") as HTMLElement
+    const artist = document.getElementById("sw-artist") as HTMLElement
+    const album = document.getElementById("sw-album") as HTMLElement
+    const link = document.getElementById("sw-link") as HTMLAnchorElement
+    const invite = document.getElementById("sw-invite") as HTMLElement
 
-      const proxiedUrl = `/api/spotify/artwork?url=${encodeURIComponent(data.albumArtUrl)}`
+    function setInvite(cardText: string, labelText: string) {
+      invite.textContent = cardText
+      const footerLabel = document.getElementById("sw-footer-label")
+      if (footerLabel) footerLabel.textContent = labelText
+    }
 
-      if (art.src !== proxiedUrl) {
-        art.onload = async () => {
-          const colors = await extractGradientColors(art)
-          if (colors) applyGradient(colors)
+    function applyGradient(colors: { top: string; bottom: string; glow: string; light: string }) {
+      card.style.background = `linear-gradient(135deg, ${colors.top}, ${colors.bottom})`
+      card.style.setProperty("--glow-color", colors.glow)
+      card.style.setProperty("--light-color", colors.light)
+    }
+
+    function applyFeaturedTrack() {
+      track.textContent = FEATURED_TRACK.trackName
+      artist.textContent = FEATURED_TRACK.artistName
+      album.textContent = FEATURED_TRACK.albumName
+      link.href = FEATURED_TRACK.trackUrl
+      setInvite(FEATURED_TRACK.invite, FEATURED_TRACK.labelText)
+      art.src = FEATURED_TRACK.artUrl
+      applyGradient(FEATURED_TRACK.gradient)
+    }
+
+    async function fetchAndRender() {
+      try {
+        const res = await fetch("/api/spotify/now-playing")
+        const data = await res.json()
+
+        if (data.error) {
+          applyFeaturedTrack()
+          return
         }
-        art.src = proxiedUrl
-      }
-    } catch {
-      applyFeaturedTrack()
-    }
-  }
 
-  applyFeaturedTrack()
-  fetchAndRender()
-  setInterval(fetchAndRender, POLL_INTERVAL_MS)
-</script>
+        track.textContent = data.trackName
+        artist.textContent = data.artistName
+        album.textContent = data.albumName
+        link.href = data.trackUrl
+        setInvite(
+          data.isPlaying ? "listen along" : "Listen now",
+          data.isPlaying ? "Now playing" : "Last played"
+        )
+
+        const proxiedUrl = `/api/spotify/artwork?url=${encodeURIComponent(data.albumArtUrl)}`
+
+        if (art.src !== proxiedUrl) {
+          art.onload = async () => {
+            const colors = await extractGradientColors(art)
+            if (colors) applyGradient(colors)
+          }
+          art.src = proxiedUrl
+        }
+      } catch {
+        applyFeaturedTrack()
+      }
+    }
+
+    applyFeaturedTrack()
+    fetchAndRender()
+    setInterval(fetchAndRender, POLL_INTERVAL_MS)
+  </script>
+</div>

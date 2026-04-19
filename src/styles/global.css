@@ -9,9 +9,9 @@
 @import "./fonts.css";
 
 @theme {
-  --font-display: "Acorn", serif;
-  --font-ui: "Bricolage Grotesque", sans-serif;
-  --font-body: "Geist", sans-serif;
+  --font-display: "Acorn", "Noto Sans Arabic", serif;
+  --font-ui: "Bricolage Grotesque", "Noto Sans Arabic", sans-serif;
+  --font-body: "Geist", "Noto Sans Arabic", sans-serif;
 
   --color-background: var(--sand-2);
   --color-surface: var(--sand-3);

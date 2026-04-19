@@ -53,9 +53,7 @@ import IconHeart from "../assets/icons/heart.svg"
 
       <!-- Colophon -->
       <div class="[grid-area:colophon]">
-        <p class="font-display text-display mb-3 text-lg font-medium md:tracking-normal lg:text-xl">
-          Colophon
-        </p>
+        <p class="font-display text-display mb-3 text-lg font-medium lg:text-xl">Colophon</p>
         <div class="text-foreground flex flex-col gap-px text-xs sm:text-sm">
           <p>
             <span
@@ -95,7 +93,9 @@ import IconHeart from "../assets/icons/heart.svg"
             >
           </p>
           <p class="flex items-start gap-1">
-            &copy; 2026 Ahmad Ghoniem &middot; Made with <IconHeart class="text-heart size-4" /> in
+            &copy; {new Date().getFullYear()} Ahmad Ghoniem &middot; Made with <IconHeart
+              class="text-heart size-4"
+            /> in
             <Image
               src={alexandriaLogo}
               alt="The word 'Alexandria' written in Arabic calligraphy"
