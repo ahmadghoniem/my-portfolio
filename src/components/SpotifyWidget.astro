@@ -21,18 +21,18 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
   <!-- Track Info -->
   <div class="flex min-w-0 flex-1 flex-col justify-center leading-tight">
     <!-- Track Title -->
-    <h4 id="sw-track" class="truncate pr-6 font-semibold text-white"></h4>
+    <h4 id="sw-track" class="truncate pr-6 font-semibold"></h4>
 
     <!-- Artist -->
-    <span class="opacity-80">
-      <span id="sw-artist" class="block truncate pr-6 text-xs font-medium text-white"> </span>
-    </span>
+    <div class="min-w-0 opacity-80">
+      <div id="sw-artist" class="truncate pr-6 text-xs font-medium"></div>
+    </div>
 
     <!-- Album + Link Row -->
     <div class="mt-2 flex items-center gap-2">
-      <span class="opacity-65">
-        <span id="sw-album" class="block min-w-0 truncate text-xs text-white"></span>
-      </span>
+      <div class="min-w-0 opacity-65">
+        <div id="sw-album" class="truncate text-xs"></div>
+      </div>
       <a
         id="sw-link"
         href="#"
@@ -101,7 +101,11 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
 
     function loadImage(img: HTMLImageElement, src: string): Promise<void> {
       return new Promise((resolve) => {
-        if (img.complete) { img.src = src; resolve(); return }
+        if (img.complete) {
+          img.src = src
+          resolve()
+          return
+        }
         img.onload = () => resolve()
         img.src = src
       })
