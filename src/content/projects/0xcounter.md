@@ -1,7 +1,7 @@
 ---
 title: "0xCounter"
 description: >-
-  A global counter on the blockchain. Covers real-time events, on-chain indexing, and ENS resolution all in one minimal dApp.
+  A global counter on the blockchain covering real-time events, on-chain indexing, and ENS resolution all in one minimal dApp.
 tags:
   - React
   - Wagmi

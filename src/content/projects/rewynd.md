@@ -1,7 +1,7 @@
 ---
 title: "Rewynd"
 description: >-
-  Built to fill a gap I felt backtesting on FX Replay — ended up catching the attention of their team.
+  Built to fill a gap I felt backtesting on FX Replay ended up catching the attention of their team.
 tags:
   - React
   - TypeScript
