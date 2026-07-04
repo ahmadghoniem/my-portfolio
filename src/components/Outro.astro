@@ -20,20 +20,33 @@ import IconLinkedin from "../assets/icons/linkedin.svg"
       class="flex flex-col gap-4 text-lg font-medium sm:flex-row sm:gap-6 md:text-xl lg:text-2xl">
       <button
         id="copy-email-btn"
-        class="text-foreground hover:text-muted inline-flex w-fit cursor-pointer items-center gap-2 transition-colors duration-200">
-        <span id="copy-icon"><IconCopy class="size-5 md:size-6" /></span>
-        <span id="check-icon" class="hidden"
+        aria-label="Copy email address hi@ahmadghoniem.me"
+        class="group touch-target-compact text-foreground hover:text-muted inline-flex w-fit cursor-pointer items-center gap-2 transition-colors duration-200">
+        <span id="copy-icon" class="sm:hidden"><IconCopy class="size-5 md:size-6" /></span>
+        <span id="check-icon" class="hidden sm:hidden"
           ><IconCheck class="text-accent size-5 md:size-6" /></span
         >
-        <span id="email-label">hi@ahmadghoniem.me</span>
+        <!-- Invisible email copy reserves the widest width so the shorter
+             hover/copied labels never shift the layout. Hover flips up to
+             "Click to copy"; the data-copied state flips up to "Copied" and
+             wins over hover via the important (!) modifier. -->
+        <span class="relative inline-block h-lh overflow-hidden text-left align-bottom">
+          <span class="invisible" aria-hidden="true">hi@ahmadghoniem.me</span>
+          <span
+            class="absolute inset-0 flex flex-col transition-transform duration-300 ease-out motion-reduce:transition-none sm:group-hover:-translate-y-[1lh] sm:group-data-[copied=true]:-translate-y-[2lh]!">
+            <span class="h-lh">hi@ahmadghoniem.me</span>
+            <span class="h-lh">Click to copy</span>
+            <span class="text-accent h-lh">Copied</span>
+          </span>
+        </span>
       </button>
 
       <a
         href="https://www.linkedin.com/in/ahmad-ghoniem/"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-foreground hover:text-muted inline-flex w-fit items-center gap-2 transition-colors duration-200">
-        <IconLinkedin class="size-5 md:size-6" />
+        class="touch-target-compact text-foreground hover:text-muted inline-flex w-fit items-center gap-2 transition-colors duration-200">
+        <IconLinkedin class="size-5 sm:hidden md:size-6" />
         <span>Connect on LinkedIn</span>
       </a>
     </div>
@@ -45,15 +58,27 @@ import IconLinkedin from "../assets/icons/linkedin.svg"
   const copyIcon = document.getElementById("copy-icon")
   const checkIcon = document.getElementById("check-icon")
 
+  const isDesktop = () => window.matchMedia("(min-width: 640px)").matches
+
   if (btn && copyIcon && checkIcon) {
+    let resetTimer: ReturnType<typeof setTimeout> | undefined
+
     btn.addEventListener("click", async () => {
       await navigator.clipboard.writeText("hi@ahmadghoniem.me")
-      copyIcon.classList.add("hidden")
-      checkIcon.classList.remove("hidden")
-      setTimeout(() => {
-        copyIcon.classList.remove("hidden")
-        checkIcon.classList.add("hidden")
-      }, 2000)
+      clearTimeout(resetTimer)
+
+      if (isDesktop()) {
+        // Flips the stack up to the "Copied" line (wins over hover via !).
+        btn.dataset.copied = "true"
+        resetTimer = setTimeout(() => delete btn.dataset.copied, 2000)
+      } else {
+        copyIcon.classList.add("hidden")
+        checkIcon.classList.remove("hidden")
+        resetTimer = setTimeout(() => {
+          copyIcon.classList.remove("hidden")
+          checkIcon.classList.add("hidden")
+        }, 2000)
+      }
     })
   }
 </script>

@@ -1,11 +1,10 @@
 ---
 import IconSpotify from "../assets/icons/spotify.svg"
-import IconArrowRight from "../assets/icons/arrow-right.svg"
 ---
 
 <div
   id="sw-card"
-  class="relative flex w-xs max-w-sm items-center gap-2.5 overflow-hidden rounded-lg p-1 pr-2 text-white select-none lg:w-sm">
+  class="relative flex w-full max-w-sm min-w-0 items-center gap-2.5 overflow-hidden rounded-lg p-1 pr-2 text-white select-none lg:w-sm">
   <!-- Cover Art -->
   <div
     id="sw-art-wrap"
@@ -30,19 +29,17 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
 
     <!-- Album + Link Row -->
     <div class="mt-2 flex items-center gap-2">
-      <div class="min-w-0 opacity-65">
+      <div class="min-w-0 opacity-70">
         <div id="sw-album" class="truncate text-xs"></div>
       </div>
       <a
         id="sw-link"
         href="#"
+        tabindex="-1"
         target="_blank"
         rel="noopener noreferrer"
-        class="group/link ml-auto flex shrink-0 items-center gap-1 text-xs text-white/65 transition-colors hover:text-white">
+        class="-my-3 ml-auto flex min-h-11 min-w-11 shrink-0 items-center justify-end py-3 text-xs font-medium text-(--light-color)/70 transition-colors hover:text-(--light-color)">
         <span id="sw-invite"></span>
-        <span class="inline-block transition-transform group-hover/link:translate-x-0.5">
-          <IconArrowRight class="size-3" />
-        </span>
       </a>
     </div>
   </div>
@@ -94,6 +91,7 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
       artist.textContent = FEATURED_TRACK.artistName
       album.textContent = FEATURED_TRACK.albumName
       link.href = FEATURED_TRACK.trackUrl
+      link.tabIndex = 0
       setInvite(FEATURED_TRACK.invite, FEATURED_TRACK.labelText)
       art.src = FEATURED_TRACK.artUrl
       applyGradient(FEATURED_TRACK.gradient)
@@ -125,6 +123,7 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
         artist.textContent = data.artistName
         album.textContent = data.albumName
         link.href = data.trackUrl
+        link.tabIndex = 0
         setInvite(
           data.isPlaying ? "listen along" : "Listen now",
           data.isPlaying ? "Now playing" : "Last played"
@@ -145,8 +144,19 @@ import IconArrowRight from "../assets/icons/arrow-right.svg"
       }
     }
 
-    applyFeaturedTrack()
-    fetchAndRender()
-    setInterval(fetchAndRender, POLL_INTERVAL_MS)
+    // Start polling only once the widget nears the viewport, so an offscreen
+    // footer never triggers Spotify requests on load.
+    const observer = new IntersectionObserver(
+      ([entry], obs) => {
+        if (!entry.isIntersecting) return
+        obs.disconnect()
+        applyFeaturedTrack()
+        fetchAndRender()
+        setInterval(fetchAndRender, POLL_INTERVAL_MS)
+      },
+      { rootMargin: "480px" }
+    )
+    observer.observe(card)
   </script>
+
 </div>

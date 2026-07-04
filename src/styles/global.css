@@ -87,6 +87,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-height: 44px;
+  padding-block: 10px;
+  margin-block: -10px;
 
   &:hover .arrow {
     transform: translate(2px, -2px);
@@ -99,6 +102,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-height: 44px;
+  padding-block: 10px;
+  margin-block: -10px;
 
   &:hover .arrow {
     transform: translateX(4px);
@@ -111,7 +117,7 @@
 }
 
 @utility nav-link {
-  @apply text-muted flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
+  @apply text-muted flex min-h-10 items-center rounded-full px-3 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-3 md:text-base;
 
   &:not(.bg-nav-active):hover {
     @apply text-foreground bg-nav-active/70;
@@ -119,7 +125,16 @@
 }
 
 @utility nav-link-external {
-  @apply text-muted hover:text-foreground flex items-center rounded-full px-2 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-4 md:text-lg;
+  @apply text-muted hover:text-foreground flex min-h-10 items-center rounded-full px-3 py-1 text-sm whitespace-nowrap transition-colors duration-200 sm:text-base md:px-3 md:text-base;
+}
+
+@utility touch-target-compact {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding-block: 10px;
+  margin-block: -10px;
 }
 
 @utility tech-chip {
@@ -129,9 +144,9 @@
 
 @utility footer-grid {
   display: grid;
+  width: 100%;
   gap: 2rem;
-  grid-template-columns: auto;
-  justify-content: center;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "spotify"
     "elsewhere"

@@ -7,7 +7,7 @@ const p = (hash: string) => (isHome ? hash : `/${hash}`)
   <nav class="mx-auto mt-5 flex items-center justify-center">
     <ul
       id="nav-pill"
-      class="bg-nav-pill/80 [&.is-scrolled]:bg-nav-pill/80 pointer-events-auto flex items-center gap-1 rounded-full p-2 backdrop-blur-md backdrop-saturate-150 transition-[background,box-shadow,backdrop-filter] duration-200 ease-linear sm:bg-transparent sm:backdrop-blur-none sm:backdrop-saturate-100 [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:backdrop-saturate-150">
+      class="bg-nav-pill/80 [&.is-scrolled]:bg-nav-pill/80 pointer-events-auto flex items-center gap-0.5 rounded-full p-1.5 backdrop-blur-md backdrop-saturate-150 transition-[background,box-shadow,backdrop-filter] duration-200 ease-linear sm:bg-transparent sm:backdrop-blur-none sm:backdrop-saturate-100 [&.is-scrolled]:backdrop-blur-md [&.is-scrolled]:backdrop-saturate-150">
       <li>
         <a href={p("#hero")} data-section="hero" class="nav-link">Home</a>
       </li>
